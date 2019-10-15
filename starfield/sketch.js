@@ -1,16 +1,19 @@
 let stars = [];
 let numStars = 500;
+let off = 0;
 function setup() {
   // put setup code here
   createCanvas(800, 800);
   for (let i = 0; i < numStars; i++) {
     stars.push(new Star());
   }
-  stars[0].speed = 21;
+ // stars[0].speed = 21;
 }
 
 function draw() {
   // put drawing code here
+  off++;
+  angleMode(DEGREES);
   background(0);
   colorMode(RGB);
   noStroke();
@@ -18,6 +21,7 @@ function draw() {
   textSize(32);
   text(stars[0].speed,10,height-40);
   translate(width /2, height/2);
+  // rotate(off);
   for (let i=0;i<numStars;++i){
     stars[i].show();
     stars[i].update();
@@ -50,7 +54,7 @@ class Star{
   }
   decSpeed(){
     this.speed = max(-100,--this.speed);
-    // console.log(this.speed);
+    // console.log(this.speed);y
   }
   
   update(){
@@ -76,11 +80,13 @@ class Star{
     let psy = map(this.position.y / this.pz, 0,1,0,height/2);
     let r = map(this.position.z,0,height,8,0);
     //let a = map(this.spee,0,height,100,0);
-    let aa = map(this.position.z,0,height,100,20);
+    let aa = map(this.position.z,0,height,100,10);
+    if (this.speed < 0)
+      aa = map(this.pz,0,height,100,10);
     // fill(255,a);
     colorMode(HSB);
     stroke(this.hue,this.speed,aa);
-
+    strokeWeight(2);
     // console.log(sx,sy);
     // ellipse(sx,sy,r,r);
     line(sx,sy,psx,psy);
