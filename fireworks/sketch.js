@@ -7,10 +7,13 @@ function setup() {
 
 function draw() {
   // put drawing code here
-  background(0,100);
+  colorMode(RGB);
+  background(0,80);
   if (!r.finished)
     r.run();
-  
+  else{
+    r = new Rocket(floor(random(0,360)), createVector(floor(random(200,500)),750));
+  }
 }
 
 class Rocket{
@@ -19,7 +22,7 @@ class Rocket{
     this.maxLifetime = 300;
     this.col = col;
     this.pos = pos;
-    this.vel = createVector(0.1,-8);
+    this.vel = createVector(random(-0.1,0.1),-8);
     this.grav = createVector(0,0.01);
     this.timeToExplode = 50;
     this.timeToVanish = this.maxLifetime;
@@ -63,7 +66,8 @@ class Rocket{
     }
     else {
       noStroke();
-      fill(color(255,0,0));
+      colorMode(HSB);
+      fill(color(this.col,90,90));
       for (let i=0;i<this.glitter.length;++i){
         this.glitter[i].draw();
         // console.log(i);
