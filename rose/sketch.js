@@ -1,4 +1,4 @@
-let nSlider, dSlider, fillCheckbox;
+let nSlider, dSlider, fillCheckbox, ctx;
 let rainbow = true;
 let saveButton;
 let n = 4;
@@ -13,7 +13,10 @@ let xOffset = 0;
 let yOffset = 0;
 let angleDelta = 0.01;
 let stepDelta = 20;
-let ctx;
+let anim = false;
+let speed = 0.01;
+
+let limit = 0;
 function setup() {
   // put setup code here
   ctx = createCanvas(1200, 1200);
@@ -53,23 +56,51 @@ function setup() {
   saveButton.mousePressed(saveImage);
   rainbowCheckbox = createCheckbox('rainbow', true);
   rainbowCheckbox.changed(redraw);
+  animCheckbox = createCheckbox('animate', false);
+  animCheckbox.position(350,height+10);
+  animCheckbox.changed(animate);
+  speedSlider = createSlider(1,100,10);
+  speedSlider.position(350,height+30);
+  speedSlider.changed(redraw);
+
+
 }
 
+function animate(){
+  anim = animCheckbox.checked();
+  if (anim)
+    limit = 0;
+  redraw();
+}
 function draw() {
   // put drawing code here
-
-  drawRose(ctx);
+  //loop();
+  speed = speedSlider.value() / 1000;
+  if (anim){
+    loop();
+    drawRose(limit);
   // console.log("Total:" + totalSteps);
   // console.log("Done:" + steps);
   //offset +=.005;
-  noLoop();
+  //noLoop();
+    limit += speed;
+    if (limit > TWO_PI)
+      limit = 0.0;
+  // console.log(limit);
+  }
+  else{
+    drawRose();
+    noLoop();
+  }
+  //console.log(limit);
 }
 
 function saveImage() {
   save('rose.png');
 }
 
-function drawRose()
+
+function drawRose(lim)
 {
   d = dSlider.value();
   n = nSlider.value();
@@ -100,11 +131,20 @@ function drawRose()
   //rotate(offset);
   let steps = 0;
   let totalSteps = ceil(2 * PI * d / angleDelta);
+  let upTo;
+  if (anim)
+    upTo = (d * lim + angleDelta);
+  else
+    upTo = (d * PI * 2 + angleDelta);
+  
   // beginShape();
-  while (angle <= (d * PI * 2 + angleDelta)) {
+  //while (angle <= (d * PI * 2 + angleDelta)) {
+    //while (angle <= (d * lim + angleDelta)) {
+  while (angle <= upTo){
     if (steps % stepDelta === 0) {
       if (rainbow){
         stroke(floor(steps * 360 / totalSteps), 100, 100, alpha / 100);
+        //fill(floor(steps * 360 / totalSteps), 100, 100, alpha / 100);
       }
       else{
         
@@ -123,7 +163,7 @@ function drawRose()
     let x = cos(k * angle) * cos(angle) * r+xOffset;
     let y = cos(k * angle) * sin(angle) * r+yOffset;
     vertex(x, y);
-    if (steps % 20 == 19) {
+    if (steps % stepDelta == (stepDelta-1)) {
       endShape();
     }
     angle += angleDelta;
