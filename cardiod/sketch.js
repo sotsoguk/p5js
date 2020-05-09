@@ -4,6 +4,7 @@ let w = 1200;
 let r = w*(0.5-0.1);
 let nn = 0.3;
 let anim = true;
+let fspeed  = 0.001;
 
 function getLocation(total, i,nn){
     let phi = map((i+noise(nn))%total,0,total,0,TWO_PI);
@@ -23,8 +24,10 @@ function draw() {
   noStroke();
   fill(188,200);
   let tt = "m = "+fac.toFixed(2);
+  let tt2 = "fspeed = "+fspeed.toFixed(4);
   textSize(16);
   text(tt,20,w - 50);
+  text(tt2,20,w - 30);
   translate(width/2, height/2);
   noFill();
   stroke(150);
@@ -44,7 +47,7 @@ function draw() {
   }
   if (anim){
     // total += 1;
-    fac += 0.001;
+    fac += fspeed;
     if (fac >= total)
       fac = -total;
   }
@@ -56,4 +59,9 @@ function draw() {
       fac = 0;
   }
   
+}
+
+function mouseWheel(event){
+  console.log(event.delta);
+  fspeed += 0.001 *(event.delta / 1000);
 }
